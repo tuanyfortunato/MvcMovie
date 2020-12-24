@@ -1,1 +1,66 @@
-<h1>Movies - Index</h1>
+@model List<Movie>
+
+<h1>List Movies</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <table id="tbMovies">
+            <thead>
+                <th>Title 01</th>
+                <th>Release Date</th>
+                <th>Genre</th>
+                <th>Price</th>
+                <th></th>
+                <th></th>
+            </thead>
+            <tbody data-bind="foreach: listMovies">
+                <tr>
+                    <td data-bind="text: title"></td>
+                    <td data-bind="text: releaseDate"></td>
+                    <td data-bind="text: genre"></td>
+                    <td data-bind="text: price"></td>
+                    <td><button data-bind="click: $parent.edit">Edit</button></td>
+                    <td><button data-bind="click: $parent.details">Details</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    var model = @Json.Serialize(Model);
+
+    function ViewModel(){
+        var self = this;
+        self.listMovies = ko.observableArray([]);
+
+        self.edit = function(data){
+            window.location.href = '@Url.Action("Edit", "Movies")' + "/" + data.id();
+        }
+
+        self.details = function(data){
+            window.location.href = '@Url.Action("Details", "Movies")' + "/" + data.id();
+        }
+
+        self.init = function(){
+            if(model.length > 0){
+                for(let item of model){
+                    self.listMovies.push({
+                        id: ko.observable(item.id),
+                        title: ko.observable(item.title),
+                        releaseDate: ko.observable(item.releaseDate),
+                        genre: ko.observable(item.genre),
+                        price: ko.observable(item.price),
+                    })
+                }
+            }
+        }
+
+        self.init();
+
+    }
+
+    var viewModel = new ViewModel();
+    ko.applyBindings(viewModel);
+
+</script>
